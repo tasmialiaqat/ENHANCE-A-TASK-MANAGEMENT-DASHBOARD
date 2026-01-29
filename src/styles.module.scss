@@ -1,0 +1,609 @@
+// Variables
+$primary-color: #4f46e5;
+$primary-hover: #4338ca;
+$danger-color: #ef4444;
+$success-color: #22c55e;
+$warning-color: #f59e0b;
+$text-color: #1f2937;
+$text-muted: #6b7280;
+$border-color: #e5e7eb;
+$background-color: #f9fafb;
+$card-background: #ffffff;
+
+// Base styles
+.app {
+  min-height: 100vh;
+  background-color: $background-color;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: $card-background;
+  border-bottom: 1px solid $border-color;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 10%);
+
+  h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: $text-color;
+  }
+}
+
+.createButton {
+  padding: 0.5rem 1rem;
+  background-color: $primary-color;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: $primary-hover;
+  }
+}
+
+.main {
+  display: flex;
+  padding: 1.5rem;
+  gap: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.sidebar {
+  width: 300px;
+  flex-shrink: 0;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+}
+
+// Task List styles
+.taskList {
+  margin-top: 1rem;
+}
+
+.taskGrid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.loading,
+.error,
+.emptyState {
+  text-align: center;
+  padding: 3rem;
+  color: $text-muted;
+}
+
+.error {
+  color: $danger-color;
+}
+
+// Task Card styles
+.taskCard {
+  background-color: $card-background;
+  border: 1px solid $border-color;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+
+  &:hover {
+    box-shadow: 0 4px 6px rgb(0 0 0 / 10%);
+  }
+}
+
+.priorityHigh {
+  border-left: 4px solid #f1e409;
+}
+
+.priorityMedium {
+  border-left: 4px solid $success-color;
+}
+
+.priorityLow {
+  border-left: 4px solid $warning-color;
+}
+
+.taskHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.taskTitle {
+  margin: 0;
+  font-size: 1rem;
+  color: $text-color;
+}
+
+.taskActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.editButton,
+.deleteButton {
+  padding: 0.25rem 0.5rem;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-size: 0.75rem;
+}
+
+.editButton {
+  background-color: $border-color;
+  color: $text-color;
+
+  &:hover {
+    background-color: darken($border-color, 10%);
+  }
+}
+
+.deleteButton {
+  background-color: lighten($danger-color, 35%);
+  color: $danger-color;
+
+  &:hover {
+    background-color: lighten($danger-color, 25%);
+  }
+}
+
+.taskDescription {
+  margin: 0.5rem 0;
+  color: $text-muted;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.taskMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1rem;
+  font-size: 0.75rem;
+}
+
+.statusSelector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  label {
+    color: $text-muted;
+  }
+}
+
+.statusSelect {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid $border-color;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+}
+
+.assignee {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+.priority {
+  color: $text-muted;
+}
+
+// Filter styles
+.filterContainer {
+  background-color: $card-background;
+  border: 1px solid $border-color;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+.searchBar {
+  flex: 1;
+  min-width: 200px;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border: 1px solid $border-color;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 2px rgb(79 70 229 / 20%);
+  }
+}
+
+.filterTabs {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.filterTab {
+  padding: 0.5rem 1rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: $text-muted;
+  font-size: 0.875rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: $border-color;
+  }
+
+  &.active {
+    background-color: $primary-color;
+    color: white;
+  }
+}
+
+.count {
+  margin-left: 0.25rem;
+  opacity: 0.7;
+}
+
+.assigneeFilter {
+  min-width: 150px;
+  padding-right: 25px;
+}
+
+.assigneeSelect {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid $border-color;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+}
+
+// Stats styles
+.statsContainer {
+  background-color: $card-background;
+  border: 1px solid $border-color;
+  border-radius: 0.5rem;
+  padding: 1rem;
+
+  &.compact {
+    .statsGrid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}
+
+.statsTitle {
+  margin: 0 0 1rem;
+  font-size: 1.125rem;
+  color: $text-color;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.statCard {
+  text-align: center;
+  padding: 0.75rem;
+  background-color: $background-color;
+  border-radius: 0.375rem;
+}
+
+.statValue {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: $primary-color;
+}
+
+.statLabel {
+  font-size: 0.75rem;
+  color: $text-muted;
+  margin-top: 0.25rem;
+}
+
+// Modal styles
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgb(0 0 0 / 50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background-color: $card-background;
+  border-radius: 0.5rem;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px rgb(0 0 0 / 15%);
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid $border-color;
+
+  h2 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: $text-muted;
+  line-height: 1;
+
+  &:hover {
+    color: $text-color;
+  }
+}
+
+.form {
+  padding: 1.5rem;
+}
+
+.formGroup {
+  margin-bottom: 1rem;
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: $text-color;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid $border-color;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 2px rgb(79 70 229 / 20%);
+    }
+  }
+
+  textarea {
+    resize: vertical;
+  }
+}
+
+.formRow {
+  display: flex;
+  gap: 1rem;
+
+  .formGroup {
+    flex: 1;
+  }
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.cancelButton {
+  padding: 0.5rem 1rem;
+  border: 1px solid $border-color;
+  background-color: $card-background;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-weight: 500;
+
+  &:hover {
+    background-color: $background-color;
+  }
+}
+
+.submitButton {
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: $primary-color;
+  color: white;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-weight: 500;
+
+  &:hover {
+    background-color: $primary-hover;
+  }
+}
+
+.dueDate {
+  font-size: 0.75rem;
+  color: $text-muted;
+}
+
+.noDueDate {
+  font-size: 0.75rem;
+  color: $text-muted;
+  font-style: italic;
+}
+
+.overdue {
+  color: $danger-color;
+  font-weight: 500;
+}
+
+.commentsSection {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid $border-color;
+
+  h4 {
+    margin: 0 0 0.5rem;
+    font-size: 0.875rem;
+  }
+}
+
+.commentsList {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.comment {
+  padding: 0.5rem;
+  background-color: $background-color;
+  border-radius: 0.25rem;
+  margin-bottom: 0.5rem;
+
+  strong {
+    font-size: 0.75rem;
+  }
+
+  p {
+    margin: 0.25rem 0;
+    font-size: 0.875rem;
+  }
+
+  small {
+    font-size: 0.625rem;
+    color: $text-muted;
+  }
+}
+
+.noComments {
+  color: $text-muted;
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+.addComment {
+  margin-top: 0.5rem;
+
+  textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid $border-color;
+    border-radius: 0.25rem;
+    resize: vertical;
+    min-height: 60px;
+    font-size: 0.875rem;
+  }
+
+  button {
+    margin-top: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    background-color: $primary-color;
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-size: 0.75rem;
+
+    &:hover {
+      background-color: $primary-hover;
+    }
+  }
+}
+
+.bulkActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background-color: lighten($primary-color, 45%);
+  border: 1px solid lighten($primary-color, 35%);
+  border-radius: 0.375rem;
+  margin-bottom: 1rem;
+}
+
+.selectedCount {
+  font-weight: 500;
+  color: $primary-color;
+}
+
+.bulkActionButtons {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+  padding-right: 25px;
+
+  button,
+  select {
+    padding: 0.25rem 0.5rem;
+    border: 1px solid $border-color;
+    border-radius: 0.25rem;
+    background-color: $card-background;
+    cursor: pointer;
+    font-size: 0.75rem;
+
+    &:hover {
+      background-color: $background-color;
+    }
+  }
+
+  .deleteButton {
+    background-color: lighten($danger-color, 35%);
+    border-color: lighten($danger-color, 25%);
+    color: $danger-color;
+
+    &:hover {
+      background-color: lighten($danger-color, 25%);
+    }
+  }
+}
+
+.taskCheckbox {
+  margin-right: 0.5rem;
+}
+
+// Global reset styles (applied via :global)
+:global {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
