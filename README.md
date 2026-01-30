@@ -104,57 +104,78 @@ src/
 └── main.tsx
 ```
 
----
-
-## Candidate Section
-
-*Please update this section with your findings and changes.*
-
+### Candidate Section
 ### Bugs Found and Fixed
+### Bug #1: Circular Dependency Crash
 
-1. **Bug #1**: [Description]
-   - Location:
-   - Issue:
-   - Fix:
+Location: store.ts and taskReducer.ts
 
-2. **Bug #2**: [Description]
-   - Location:
-   - Issue:
-   - Fix:
+Issue: The RootState type was being exported from the store and imported into selectors within the reducer file, while the store simultaneously imported the reducer. This created a circular loop that caused the application to fail during initialization.
 
-*(Continue for all bugs found)*
+Fix: Decoupled the architecture by moving RootState and AppDispatch definitions into a central hooks.ts file and created typed versions of useDispatch and useSelector (useAppDispatch, useAppSelector).
 
-### Features Implemented
+### Bug #2: Priority UI Mismatch
 
-#### Due Dates
-*Describe your implementation approach*
+Location: styles.module.scss
 
-#### Task Comments
-*Describe your implementation approach*
+Issue: The CSS classes for task priority borders did not align with standard urgency visual cues (e.g., High priority was rendered in Yellow/Warning instead of Red/Danger).
 
-#### Bulk Actions
-*Describe your implementation approach*
+Fix: Updated the SCSS variables and class logic to map High priority to $danger-color (Red), Medium to $warning-color (Orange), and Low to $success-color (Green) for intuitive UX.
 
-### Code Organization
+Features Implemented
+Due Dates
+Approach: Implemented a "Date-Aware" UI. I added a dueDate field to the Task interface and created a utility function to compare the current date with the task date.
 
-*Describe your folder structure decisions here.*
+UX: Added a conditional .overdue CSS class that triggers a red warning state if the task remains incomplete past its deadline.
 
-### Testing Approach
+Task Comments
+Approach: Created a nested data structure within each task object to store an array of comment objects.
 
-*Describe your testing strategy and what tests you added.*
+Implementation: Developed a dedicated CommentsSection component that allows users to append timestamped notes to tasks without reloading the main task list, leveraging Redux to maintain the local state update.
 
-#### Unit Tests Added:
-1.
-2.
-3.
-4.
-5.
+Bulk Actions
+Approach: Implemented a "Selection State" in the Redux store.
 
-#### E2E Tests Added:
-1.
-2.
-3.
+Logic: Created a BulkActions component that renders conditionally when selectedTaskIds.length > 0. I integrated "Safety Guards" within the Saga middleware to filter out high-priority tasks from bulk deletion and prevent illegal status transitions (e.g., preventing a 'Todo' task from being set to 'Done' without an intermediate 'In Progress' step).
+
+Code Organization
+I followed a Feature-Based Module structure to ensure scalability:
+
+/store: Centralized Redux configuration and Saga root.
+
+/hooks: Typed Redux wrappers to prevent circular dependencies.
+
+/components: Atomic components (TaskCard, TaskFilter) for high reusability.
+
+/styles: SCSS modules to prevent global namespace pollution and ensure style encapsulation.
+
+Testing Approach
+Strategy: Focused on State Integrity and User Flow Validation. I prioritized testing the Redux-Saga logic as it handles the application's most critical business rules.
+
+Unit Tests Added:
+
+taskReducer.test.ts: Validates that bulk actions correctly update multiple task statuses in one state change.
+
+validation.test.ts: Ensures the "Safety Guard" logic correctly blocks high-priority deletions.
+
+E2E Tests Added:
+
+Bulk Selection Flow: Validates that clicking multiple checkboxes toggles the visibility of the Bulk Actions bar.
+
+Form Submission: Ensures the TaskForm correctly creates a task and adds it to the top of the list.
+
+Additional Improvements
+Sticky UI: Made the Header and Bulk Actions bar "Sticky" to ensure controls remain accessible even when navigating long task lists.
+
+Empty State Management: Added a dedicated "No Tasks Found" view with a call-to-action button to improve the onboarding experience for new users.
+
+Saga Effect Optimization: Used takeLatest for search and filter actions to prevent race conditions during rapid user input.
+
 
 ### Additional Improvements
 
-*List any bonus improvements you made.*
+Sticky UI: Made the Header and Bulk Actions bar "Sticky" to ensure controls remain accessible even when navigating long task lists.
+
+Empty State Management: Added a dedicated "No Tasks Found" view with a call-to-action button to improve the onboarding experience for new users.
+
+Saga Effect Optimization: Used takeLatest for search and filter actions to prevent race conditions during rapid user input.
