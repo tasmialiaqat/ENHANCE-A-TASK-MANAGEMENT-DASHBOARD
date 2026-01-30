@@ -1,4 +1,4 @@
-import type { Task, User } from './types';
+import type { Task, User, TaskComment } from './types';
 
 const BASE_URL = '/api';
 
@@ -41,8 +41,31 @@ export const api = {
     return handleResponse(response);
   },
 
+  async bulkDeleteTasks(ids: string[]): Promise<{ success: boolean; deletedCount: number }> {
+    const response = await fetch(`${BASE_URL}/tasks`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ids }),
+    });
+    return handleResponse(response);
+  },
+
   async fetchUsers(): Promise<{ users: User[] }> {
     const response = await fetch(`${BASE_URL}/users`);
+    return handleResponse(response);
+  },
+
+  async fetchComments(taskId: string): Promise<{ comments: TaskComment[] }> {
+    const response = await fetch(`${BASE_URL}/tasks/${taskId}/comments`);
+    return handleResponse(response);
+  },
+
+  async createComment(taskId: string, userId: string, content: string): Promise<{ comment: TaskComment }> {
+    const response = await fetch(`${BASE_URL}/tasks/${taskId}/comments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, content }),
+    });
     return handleResponse(response);
   },
 };

@@ -25,10 +25,14 @@ export function useTaskActions() {
     updateTask: (id: string, updates: Partial<Task>) =>
       dispatch(taskTriggerActions.updateTaskTrigger({ id, updates })),
     deleteTask: (id: string) => dispatch(taskTriggerActions.deleteTaskTrigger({ id })),
+    bulkDeleteTasks: (ids: string[]) => dispatch(taskTriggerActions.bulkDeleteTrigger({ ids })),
     setFilter: (filter: Partial<TaskFilter>) =>
       dispatch(taskActions.setFilter({ filter })),
     updateTaskStatus: (id: string, status: TaskStatus) =>
       dispatch(taskActions.updateTaskStatus({ id, status })),
+    toggleTaskSelection: (id: string) => dispatch(taskActions.toggleTaskSelection({ id })),
+    selectAllTasks: (ids: string[]) => dispatch(taskActions.selectAllTasks({ ids })),
+    clearSelection: () => dispatch(taskActions.clearSelection()),
   };
 }
 

@@ -54,9 +54,19 @@ function* deleteTaskSaga(action: ReturnType<typeof taskTriggerActions.deleteTask
   }
 }
 
+function* bulkDeleteSaga(action: ReturnType<typeof taskTriggerActions.bulkDeleteTrigger>): Generator {
+  try {
+    yield call(api.bulkDeleteTasks, action.payload.ids);
+    yield put(taskActions.bulkDeleteSuccess({ ids: action.payload.ids }));
+  } catch (error) {
+    yield put(taskActions.deleteTaskFailure({ error: error instanceof Error ? error.message : 'Failed to bulk delete tasks' }));
+  }
+}
+
 export function* taskSagas(): Generator {
   yield takeEvery(taskTriggerActions.fetchTasksTrigger.type, fetchTasksSaga);
   yield takeLatest(taskTriggerActions.createTaskTrigger.type, createTaskSaga);
   yield takeLatest(taskTriggerActions.updateTaskTrigger.type, updateTaskSaga);
   yield takeLatest(taskTriggerActions.deleteTaskTrigger.type, deleteTaskSaga);
+  yield takeLatest(taskTriggerActions.bulkDeleteTrigger.type, bulkDeleteSaga);
 }

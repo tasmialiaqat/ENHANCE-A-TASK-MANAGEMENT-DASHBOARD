@@ -469,6 +469,16 @@ $card-background: #ffffff;
   font-weight: 500;
 }
 
+.dueToday {
+  color: $warning-color;
+  font-weight: 500;
+}
+
+.dueTomorrow {
+  color: #3b82f6;
+  font-weight: 500;
+}
+
 .commentsSection {
   margin-top: 1rem;
   padding-top: 1rem;

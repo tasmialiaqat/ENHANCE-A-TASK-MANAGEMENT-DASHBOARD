@@ -51,6 +51,7 @@ const taskSlice = createSlice({
     },
     deleteTaskSuccess(state, action: PayloadAction<{ id: string }>) {
       state.tasks = state.tasks.filter((task) => task.id !== action.payload.id);
+      state.selectedTaskIds = state.selectedTaskIds.filter((id) => id !== action.payload.id);
     },
     deleteTaskFailure(state, action: PayloadAction<{ error: string }>) {
       state.error = action.payload.error;
@@ -69,6 +70,25 @@ const taskSlice = createSlice({
         const statusOrder = { todo: 0, in_progress: 1, done: 2 };
         return statusOrder[a.status] - statusOrder[b.status];
       });
+    },
+    toggleTaskSelection(state, action: PayloadAction<{ id: string }>) {
+      const { id } = action.payload;
+      const index = state.selectedTaskIds.indexOf(id);
+      if (index === -1) {
+        state.selectedTaskIds.push(id);
+      } else {
+        state.selectedTaskIds.splice(index, 1);
+      }
+    },
+    selectAllTasks(state, action: PayloadAction<{ ids: string[] }>) {
+      state.selectedTaskIds = action.payload.ids;
+    },
+    clearSelection(state) {
+      state.selectedTaskIds = [];
+    },
+    bulkDeleteSuccess(state, action: PayloadAction<{ ids: string[] }>) {
+      state.tasks = state.tasks.filter((task) => !action.payload.ids.includes(task.id));
+      state.selectedTaskIds = [];
     },
   },
 });

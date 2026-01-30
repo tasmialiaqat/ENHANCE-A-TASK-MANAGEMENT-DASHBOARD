@@ -1,5 +1,6 @@
 import { memo } from 'react';
 import type { Task, User, TaskStatus } from './types';
+import { TaskDueDate } from './TaskDueDate';
 import styles from './styles.module.scss';
 
 interface TaskCardProps {
@@ -8,15 +9,18 @@ interface TaskCardProps {
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
   onStatusChange: (id: string, status: TaskStatus) => void;
+  isSelected?: boolean;
+  onToggleSelection?: (id: string) => void;
 }
 
-function TaskCardComponent({ task, users, onEdit, onDelete, onStatusChange }: TaskCardProps) {
+function TaskCardComponent({ task, users, onEdit, onDelete, onStatusChange, isSelected, onToggleSelection }: TaskCardProps) {
   const assignee = users.find((u) => u.id === task.assigneeId);
 
   const statusOptions: TaskStatus[] = ['todo', 'in_progress', 'done'];
 
+  // Fix: Use task.priority instead of task.status for card accent styling
   const getCardAccentClass = () => {
-    switch (task.status) {
+    switch (task.priority) {
       case 'high':
         return styles.priorityHigh;
       case 'medium':
@@ -31,6 +35,15 @@ function TaskCardComponent({ task, users, onEdit, onDelete, onStatusChange }: Ta
   return (
     <div className={`${styles.taskCard} ${getCardAccentClass()}`} data-testid="task-card">
       <div className={styles.taskHeader}>
+        {onToggleSelection && (
+          <input
+            type="checkbox"
+            checked={isSelected || false}
+            onChange={() => onToggleSelection(task.id)}
+            className={styles.taskCheckbox}
+            data-testid="task-checkbox"
+          />
+        )}
         <h3 className={styles.taskTitle}>{task.title}</h3>
         <div className={styles.taskActions}>
           <button
@@ -80,6 +93,8 @@ function TaskCardComponent({ task, users, onEdit, onDelete, onStatusChange }: Ta
         <div className={styles.priority}>
           Priority: {task.priority || 'Unknown'}
         </div>
+
+        <TaskDueDate dueDate={task.dueDate} status={task.status} />
       </div>
     </div>
   );

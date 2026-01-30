@@ -3,13 +3,33 @@ import { useAppSelector } from './hooks';
 import { useTaskActions, useUserActions } from './hooks';
 import { useTaskContext } from './TaskContext';
 import { TaskCard } from './TaskCard';
+import { BulkActions } from './BulkActions';
 import type { RootState, TaskStatus } from './types';
 import styles from './styles.module.scss';
 
+/**
+ * Validates status transitions per Product Requirements
+ * Allowed transitions:
+ * - todo -> in_progress
+ * - in_progress -> todo, done
+ * - done -> in_progress
+ */
+function isValidStatusTransition(currentStatus: TaskStatus, newStatus: TaskStatus): boolean {
+  if (currentStatus === newStatus) return true;
+
+  const validTransitions: Record<TaskStatus, TaskStatus[]> = {
+    todo: ['in_progress'],
+    in_progress: ['todo', 'done'],
+    done: ['in_progress'],
+  };
+
+  return validTransitions[currentStatus]?.includes(newStatus) || false;
+}
+
 export function TaskList() {
-  const { tasks, loading, error, filter } = useAppSelector((state: RootState) => state.tasks);
+  const { tasks, loading, error, filter, selectedTaskIds } = useAppSelector((state: RootState) => state.tasks);
   const { users } = useAppSelector((state: RootState) => state.users);
-  const { fetchTasks, deleteTask, updateTaskStatus } = useTaskActions();
+  const { fetchTasks, deleteTask, updateTaskStatus, toggleTaskSelection } = useTaskActions();
   const { fetchUsers } = useUserActions();
   const { setEditingTaskId, setIsFormOpen } = useTaskContext();
 
@@ -29,8 +49,20 @@ export function TaskList() {
     }
   };
 
-  const handleStatusChange = (id: string, status: TaskStatus) => {
-    updateTaskStatus(id, status);
+  const handleStatusChange = (id: string, newStatus: TaskStatus) => {
+    const task = tasks.find((t) => t.id === id);
+    if (!task) return;
+
+    // Validate status transition per Product Requirements
+    if (!isValidStatusTransition(task.status, newStatus)) {
+      alert(
+        `Cannot move task from ${task.status.replace('_', ' ')} to ${newStatus.replace('_', ' ')}. ` +
+        'Tasks must follow the workflow: Todo → In Progress → Done.'
+      );
+      return;
+    }
+
+    updateTaskStatus(id, newStatus);
   };
 
   const filteredTasks = tasks.filter((task) => {
@@ -56,6 +88,7 @@ export function TaskList() {
 
   return (
     <div className={styles.taskList} data-testid="task-list">
+      <BulkActions />
       {filteredTasks.length === 0 ? (
         <div className={styles.emptyState}>
           No tasks found. Create your first task!
@@ -70,6 +103,8 @@ export function TaskList() {
               onEdit={handleEdit}
               onDelete={handleDelete}
               onStatusChange={handleStatusChange}
+              isSelected={selectedTaskIds.includes(task.id)}
+              onToggleSelection={toggleTaskSelection}
             />
           ))}
         </div>

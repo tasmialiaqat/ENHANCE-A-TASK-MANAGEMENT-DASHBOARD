@@ -6,4 +6,5 @@ export const taskTriggerActions = {
   createTaskTrigger: createAction<{ task: Omit<Task, 'id' | 'createdAt' | 'updatedAt'> }>('tasks/createTaskTrigger'),
   updateTaskTrigger: createAction<{ id: string; updates: Partial<Task> }>('tasks/updateTaskTrigger'),
   deleteTaskTrigger: createAction<{ id: string }>('tasks/deleteTaskTrigger'),
+  bulkDeleteTrigger: createAction<{ ids: string[] }>('tasks/bulkDeleteTrigger'),
 };

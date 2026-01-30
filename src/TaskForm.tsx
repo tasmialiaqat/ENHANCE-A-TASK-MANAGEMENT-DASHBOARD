@@ -16,9 +16,11 @@ export function TaskForm() {
   const [status, setStatus] = useState<TaskStatus>('todo');
   const [priority, setPriority] = useState<TaskPriority>('medium');
   const [assigneeId, setAssigneeId] = useState<string>('');
+  const [dueDate, setDueDate] = useState<string>('');
 
   const editingTask = editingTaskId ? tasks.find((t) => t.id === editingTaskId) : null;
   
+  // Fix: Update form when task changes in Redux (Bug #2)
   useEffect(() => {
     if (editingTask) {
       setTitle(editingTask.title);
@@ -26,10 +28,11 @@ export function TaskForm() {
       setStatus(editingTask.status);
       setPriority(editingTask.priority);
       setAssigneeId(editingTask.assigneeId || '');
+      setDueDate(editingTask.dueDate || '');
     } else {
       resetForm();
     }
-  }, [editingTaskId]);
+  }, [editingTask, editingTaskId]);
 
   const resetForm = () => {
     setTitle('');
@@ -37,6 +40,7 @@ export function TaskForm() {
     setStatus('todo');
     setPriority('medium');
     setAssigneeId('');
+    setDueDate('');
   };
   
   const handleSubmit = (e: React.FormEvent) => {
@@ -47,12 +51,19 @@ export function TaskForm() {
       return;
     }
 
+    // Per Product Requirements: High priority tasks must have an assignee
+    if (priority === 'high' && !assigneeId) {
+      alert('High priority tasks must have an assignee.');
+      return;
+    }
+
     const taskData = {
       title: title.trim(),
       description: description.trim(),
       status,
       priority: priority,
       assigneeId: assigneeId || null,
+      dueDate: dueDate || null,
     };
 
     if (editingTaskId) {
@@ -62,6 +73,24 @@ export function TaskForm() {
     }
 
     handleClose();
+  };
+
+  const handlePriorityChange = (newPriority: TaskPriority) => {
+    // Validate high priority requirement per Product Requirements
+    if (newPriority === 'high' && !assigneeId) {
+      alert('High priority tasks must have an assignee. Please assign someone first.');
+      return;
+    }
+    setPriority(newPriority);
+  };
+
+  const handleAssigneeChange = (newAssigneeId: string) => {
+    // Validate removing assignee from high priority task per Product Requirements
+    if (priority === 'high' && !newAssigneeId) {
+      alert('Cannot remove assignee from a high priority task. Please change the priority first.');
+      return;
+    }
+    setAssigneeId(newAssigneeId);
   };
 
   const handleClose = () => {
@@ -129,7 +158,7 @@ export function TaskForm() {
               <select
                 id="priority"
                 value={priority}
-                onChange={(e) => setPriority(e.target.value as TaskPriority)}
+                onChange={(e) => handlePriorityChange(e.target.value as TaskPriority)}
                 data-testid="priority-input"
               >
                 <option value="low">Low</option>
@@ -144,7 +173,7 @@ export function TaskForm() {
             <select
               id="assignee"
               value={assigneeId}
-              onChange={(e) => setAssigneeId(e.target.value)}
+              onChange={(e) => handleAssigneeChange(e.target.value)}
               data-testid="assignee-input"
             >
               <option value="">Unassigned</option>
@@ -154,6 +183,17 @@ export function TaskForm() {
                 </option>
               ))}
             </select>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="dueDate">Due Date</label>
+            <input
+              id="dueDate"
+              type="date"
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+              data-testid="due-date-input"
+            />
           </div>
 
           <div className={styles.formActions}>
