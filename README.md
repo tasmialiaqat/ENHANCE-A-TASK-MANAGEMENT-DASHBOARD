@@ -3,6 +3,8 @@ A professional-grade task management dashboard built with React, TypeScript, Red
 
 📸 Screenshots
 Dashboard Overview
+<img width="1920" height="876" alt="Screenshot (20)" src="https://github.com/user-attachments/assets/938444c8-0f15-4230-a898-6bc4be7c6211" />
+<img width="1920" height="885" alt="Screenshot (21)" src="https://github.com/user-attachments/assets/2da60371-daa1-4e62-9cef-7446fb379594" />
 
 Task Management
 
