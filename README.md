@@ -1,181 +1,97 @@
-# TaskFlow
+TaskFlow
+A professional-grade task management dashboard built with React, TypeScript, Redux, and Redux Saga. This project focuses on complex state management, data integrity through business rules, and a clean, scalable architecture.
 
-A task management dashboard built with React, TypeScript, Redux, and Redux Saga.
+📸 Screenshots
+Dashboard Overview
 
-## Design Reference
+Task Management
 
-For designs, see the [Figma file](https://www.figma.com/design/fe5MUTn4Tqi4QIn61bKiyw/Coding-Challenge?node-id=0-1&p=f&t=l64vdcuOSSxtEsAD-0).
+🚀 Features
+Dynamic Task Tracking: View and manage tasks in different states (Todo, In Progress, Done).
 
-## Features
+Advanced Filtering: Filter tasks by status, search queries, and specific team members.
 
-- View tasks in different states (Todo, In Progress, Done)
-- Create, edit, and delete tasks
-- Filter tasks by status, search query, and assignee
-- View task statistics and completion rates
-- Assign tasks to team members
+Task Statistics: Real-time calculation of completion rates and priority distribution.
 
-### Partially Implemented Features (To Be Completed)
+Safety-First Operations: Critical business rules enforced via Redux-Saga (e.g., status transition constraints).
 
-- **Due Dates**: Display and highlight overdue tasks
-- **Task Comments**: Add and view comments on tasks
-- **Bulk Actions**: Select and perform actions on multiple tasks
+Responsive Dashboard: Sidebar-driven layout with sticky headers for efficient navigation.
 
-## Important: Business Rules
+🛠 Tech Stack
+Frontend: React 18, TypeScript
 
-**Before implementing features or fixing bugs, read `PRODUCT_REQUIREMENTS.md`** - it contains critical business rules that all implementations must follow, including:
+State Management: Redux Toolkit, Redux Saga (Side-effect management)
 
-- Status transition rules (which status changes are allowed)
-- Priority validation rules (constraints on high-priority tasks)
-- Due date display rules (styling and formatting requirements)
-- Bulk action rules (constraints on bulk operations)
+Styling: CSS Modules with SCSS
 
-## Tech Stack
+Build Tool: Vite
 
-- **Frontend**: React 18, TypeScript
-- **State Management**: Redux, Redux Saga
-- **Styling**: CSS Modules with SCSS
-- **Build Tool**: Vite
-- **Testing**: Vitest, React Testing Library, Cypress
+Testing: Vitest, React Testing Library, Cypress (E2E)
 
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+
-- npm
-
-### Installation
-
-```bash
-npm ci
-```
-
-### Development
-
-Start the mock API server:
-```bash
-npm run server
-```
-
-Start the development server:
-```bash
-npm run dev
-```
-
-Open http://localhost:3000 in your browser.
-
-### Testing
-
-Run unit tests:
-```bash
-npm test
-```
-
-Run E2E tests:
-```bash
-npm run cypress
-```
-
-## Project Structure
-
-```
+📁 Project Structure
+Plaintext
 src/
-├── App.tsx
-├── TaskList.tsx
-├── TaskCard.tsx
-├── TaskForm.tsx
-├── TaskFilter.tsx
-├── TaskStats.tsx
-├── TaskDueDate.tsx      # Feature: Due date display (partial)
-├── TaskComments.tsx     # Feature: Task comments (partial)
-├── BulkActions.tsx      # Feature: Bulk actions (partial)
-├── TaskContext.tsx
-├── taskSaga.ts
-├── taskReducer.ts
-├── taskActions.ts
-├── userActions.ts
-├── userReducer.ts
-├── userSaga.ts
-├── store.ts
-├── api.ts
-├── types.ts
-├── hooks.ts
-├── styles.module.scss
-└── main.tsx
-```
+├── components/          # Atomic components (TaskCard, TaskFilter, etc.)
+├── hooks/               # Custom typed hooks (useAppSelector, useAppDispatch)
+├── store/               # Redux store configuration and Sagas
+├── types/               # Global TypeScript interfaces and types
+├── styles/              # SCSS Modules and global variables
+├── App.tsx              # Application shell
+└── main.tsx             # Entry point
+👨‍💻 Candidate Report & Contributions
+🐛 Bugs Found and Fixed
+1. Circular Dependency Crash
+Location: store.ts & taskReducer.ts
 
-### Candidate Section
-### Bugs Found and Fixed
-### Bug #1: Circular Dependency Crash
+Issue: Exporting RootState from the store and importing it back into selectors created a runtime initialization loop.
 
-Location: store.ts and taskReducer.ts
+Fix: Moved RootState and AppDispatch definitions to hooks.ts. Implemented typed wrappers useAppDispatch and useAppSelector to decouple the store from the slice logic.
 
-Issue: The RootState type was being exported from the store and imported into selectors within the reducer file, while the store simultaneously imported the reducer. This created a circular loop that caused the application to fail during initialization.
-
-Fix: Decoupled the architecture by moving RootState and AppDispatch definitions into a central hooks.ts file and created typed versions of useDispatch and useSelector (useAppDispatch, useAppSelector).
-
-### Bug #2: Priority UI Mismatch
-
+2. Priority UI Mismatch
 Location: styles.module.scss
 
-Issue: The CSS classes for task priority borders did not align with standard urgency visual cues (e.g., High priority was rendered in Yellow/Warning instead of Red/Danger).
+Issue: Priority borders used non-standard coloring (High priority appeared Yellow).
 
-Fix: Updated the SCSS variables and class logic to map High priority to $danger-color (Red), Medium to $warning-color (Orange), and Low to $success-color (Green) for intuitive UX.
+Fix: Realigned variables to map High to $danger-color (Red), Medium to $warning-color (Orange), and Low to $success-color (Green).
 
-Features Implemented
-Due Dates
-Approach: Implemented a "Date-Aware" UI. I added a dueDate field to the Task interface and created a utility function to compare the current date with the task date.
+✨ Features Implemented
+Due Dates (Logic & UI)
+Approach: Added dueDate support to the task interface and created utility functions for real-time date comparison.
 
-UX: Added a conditional .overdue CSS class that triggers a red warning state if the task remains incomplete past its deadline.
+UX: Implemented an .overdue class that highlights tasks in Red if the current date exceeds the deadline while the status is not 'Done'.
 
 Task Comments
-Approach: Created a nested data structure within each task object to store an array of comment objects.
+Approach: Extended the task data model to support nested timestamped comment objects.
 
-Implementation: Developed a dedicated CommentsSection component that allows users to append timestamped notes to tasks without reloading the main task list, leveraging Redux to maintain the local state update.
+Implementation: Created a CommentsSection component that allows for seamless entry and viewing of notes without interrupting the main dashboard flow.
 
 Bulk Actions
-Approach: Implemented a "Selection State" in the Redux store.
+Approach: Centralized a selectionState in Redux to track IDs.
 
-Logic: Created a BulkActions component that renders conditionally when selectedTaskIds.length > 0. I integrated "Safety Guards" within the Saga middleware to filter out high-priority tasks from bulk deletion and prevent illegal status transitions (e.g., preventing a 'Todo' task from being set to 'Done' without an intermediate 'In Progress' step).
+Logic: Integrated "Safety Guards" in the Saga middleware. This prevents bulk actions on high-priority tasks and blocks illegal status transitions (e.g., skipping the 'In Progress' phase) during batch updates.
 
-Code Organization
-I followed a Feature-Based Module structure to ensure scalability:
+🧪 Testing Approach
+Strategy: Focused on state integrity for business-critical operations.
 
-/store: Centralized Redux configuration and Saga root.
+Unit Testing: Verified that the taskReducer handles multiple status updates accurately.
 
-/hooks: Typed Redux wrappers to prevent circular dependencies.
+E2E Testing: Validated the full "Selection-to-Action" user flow using Cypress to ensure UI components sync with the Redux state.
 
-/components: Atomic components (TaskCard, TaskFilter) for high reusability.
+🛠 Installation & Setup
+Install Dependencies
 
-/styles: SCSS modules to prevent global namespace pollution and ensure style encapsulation.
+Bash
+npm ci
+Run Mock Server (Backend)
 
-Testing Approach
-Strategy: Focused on State Integrity and User Flow Validation. I prioritized testing the Redux-Saga logic as it handles the application's most critical business rules.
+Bash
+npm run server
+Run Development Server (Frontend)
 
-Unit Tests Added:
+Bash
+npm run dev
+Run Tests
 
-taskReducer.test.ts: Validates that bulk actions correctly update multiple task statuses in one state change.
-
-validation.test.ts: Ensures the "Safety Guard" logic correctly blocks high-priority deletions.
-
-E2E Tests Added:
-
-Bulk Selection Flow: Validates that clicking multiple checkboxes toggles the visibility of the Bulk Actions bar.
-
-Form Submission: Ensures the TaskForm correctly creates a task and adds it to the top of the list.
-
-Additional Improvements
-Sticky UI: Made the Header and Bulk Actions bar "Sticky" to ensure controls remain accessible even when navigating long task lists.
-
-Empty State Management: Added a dedicated "No Tasks Found" view with a call-to-action button to improve the onboarding experience for new users.
-
-Saga Effect Optimization: Used takeLatest for search and filter actions to prevent race conditions during rapid user input.
-
-
-### Additional Improvements
-
-Sticky UI: Made the Header and Bulk Actions bar "Sticky" to ensure controls remain accessible even when navigating long task lists.
-
-Empty State Management: Added a dedicated "No Tasks Found" view with a call-to-action button to improve the onboarding experience for new users.
-
-Saga Effect Optimization: Used takeLatest for search and filter actions to prevent race conditions during rapid user input.
+Bash
+npm test             # Unit Tests
+npm run cypress      # E2E Tests
